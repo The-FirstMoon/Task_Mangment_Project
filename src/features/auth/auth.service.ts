@@ -9,7 +9,7 @@ export const addUser = async (newRegister : registerDTO,hashedPassword : string)
         role
     } = newRegister
     const result = await pool.query<UserModel>(`
-        INSERT INTO users (userName, email,password_hash,role)
+        INSERT INTO users (username, email, password_hash, role)
         VALUES($1,$2,$3,$4)
         RETURNING *
         `,
