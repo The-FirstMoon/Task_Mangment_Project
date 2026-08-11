@@ -1,7 +1,7 @@
-import { createCommentsTable } from "./migrations/coments_table";
-import { createProjectsTable } from "./migrations/projects_table";
-import { createTasksTable } from "./migrations/tasks_table";
-import { createUsersTable } from "./migrations/users_tables";
+import { createCommentsTable } from "./Tables/coments_table";
+import { createProjectsTable } from "./Tables/projects_table";
+import { createTasksTable } from "./Tables/tasks_table";
+import { createUsersTable } from "./Tables/users_tables";
 
 export async function initDataBase() {
     await createUsersTable();

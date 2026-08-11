@@ -10,3 +10,12 @@ export const findById = async (id: number) : Promise<UserModel> =>{
     )
     return result.rows[0]
 }
+
+export const deleteUser =  async (id: number) : Promise<void> =>{
+    await pool.query(`
+        DELETE FROM users
+        WHERE id = ($1)
+        `,
+        [id]
+    );
+}

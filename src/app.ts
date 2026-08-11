@@ -1,7 +1,7 @@
-import { errorHandler } from "./middleware/error.middleware";
+import { errorHandler } from "./middleware/errorHandler";
 import express from 'express';
-import authRouter from './modules/auth/auth.router';
-import user from "./modules/users/user.router"
+import authRouter from './features/auth/auth.router';
+import user from "./features/users/user.router"
 
 const app = express()
 app.use(express.json())
