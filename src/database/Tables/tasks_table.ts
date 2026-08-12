@@ -9,13 +9,13 @@ export async function createTasksTable(){
             status VARCHAR(10) NOT NULL CHECK (status IN ('TODO', 'INPROGRESS', 'DONE')) NOT NULL,
             priority VARCHAR(10) CHECK(priority IN('LOW', 'MEDIUM', 'HIGH')),
 
-            assignedUserId INTEGER NOT NULL,
-            projectId INTEGER NOT NULL,
+            assigned_user_id INTEGER NOT NULL,
+            project_id INTEGER NOT NULL,
 
-            FOREIGN KEY (assignedUserId)
+            FOREIGN KEY (assigned_user_id)
                 REFERENCES users(id)
                 ON DELETE CASCADE,
-            FOREIGN KEY (projectId)
+            FOREIGN KEY (project_id)
                 REFERENCES projects(id)
                 ON DELETE CASCADE
         )
