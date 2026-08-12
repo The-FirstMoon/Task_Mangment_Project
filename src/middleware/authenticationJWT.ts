@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { Payload } from "../features/auth/auth.type";
+import { ROLE } from "../utils/constants";
 
 export const verfiyToken = (
   req: Request,
@@ -8,7 +9,7 @@ export const verfiyToken = (
   next: NextFunction
 ) => {
   const authHeader = req.headers.authorization;
-  const secret = process.env.SECRET_KEY as string ;
+  const secret = process.env.SECRET_KEY || "";
 
 
   if (!authHeader?.startsWith("Bearer ")) {
@@ -24,6 +25,7 @@ export const verfiyToken = (
       token,
       secret
     ) as Payload;
+    decoded.id = Number(decoded.id);
     req.user = decoded;
 
     //console.log(typeof req.user.id, req.user)

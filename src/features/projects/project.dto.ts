@@ -7,7 +7,3 @@ export interface editPrjectDTO{
     description?: string
 }
 
-export interface idParamsDTO{
-    [key:string]:string,
-    id : string
-}

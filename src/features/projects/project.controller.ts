@@ -1,14 +1,14 @@
 import { Request, Response } from "express";
-import { editPrjectDTO, idParamsDTO, prjectDTO } from "./project.dto";
+import { editPrjectDTO,prjectDTO } from "./project.dto";
 import { ProjectModel } from "./project.type";
 import * as service from "./project.service"
 import *  as userService from "../auth/auth.service";
-import { ROLE } from "../../utils/constants";
+import { ROLE, idParamsDTO } from "../../utils/constants";
 
 
 export const addProject = async (req: Request<{},{}, prjectDTO>, res: Response) => {
     const owner_id = req.user!.id;
-    const {name, description} = req.body;
+    //const {name, description} = req.body;
 
     const newProject : ProjectModel = await service.addProject(req.body, owner_id)
 
@@ -33,6 +33,11 @@ export const getProject = async (req: Request<idParamsDTO>, res: Response) => {
     const {id} = req.params;
     const owner_id = req.user!.id;
     const project : ProjectModel = await service.getProject(Number(id), owner_id);
+    if(!project && req.user!.role === ROLE.USER){
+        const error = new Error("Forbidedn you arent the owner of this project or admin.");
+        (error as any).status = 403;
+        throw error;
+    }
     res.status(200).json({
         message: "The project fetched successfully.",
         project: project
