@@ -1,7 +1,7 @@
 export type status = "TODO" | "INPROGRESS" | "DONE";
 export type priority = "LOW" | "MEDIUM" | "HIGH";
 
-export interface TaskMODEL {
+export interface TaskModel {
     id:number,
     title: string,
     description: string,

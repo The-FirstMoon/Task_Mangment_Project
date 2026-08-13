@@ -3,8 +3,9 @@ import { editTaskDTO, TaskDTO } from "./task.dto";
 import * as service from "./task.service";
 import * as projectService from "../projects/project.service";
 import { ProjectModel } from "../projects/project.type";
-import { TaskMODEL } from "./task.types";
+import { TaskModel } from "./task.types";
 import { idParamsDTO, ROLE } from "../../utils/constants";
+import { AppError } from "../../utils/ApiError";
 
 // when add a task u will be the owner of the project of this task, so u r nt the one who is gonna be doing the task
 export const addTask = async (req: Request<{},{},TaskDTO>, res: Response) =>{
@@ -12,9 +13,7 @@ export const addTask = async (req: Request<{},{},TaskDTO>, res: Response) =>{
     const task : TaskDTO = req.body;
     const project : ProjectModel = await projectService.getProject(task.projectId, owner_id);
     if(!project){
-        const error = new Error("Forbidedn you arent the owner of this project.");
-        (error as any).status = 403;
-        throw error;
+        throw new AppError("Forbidedn you arent the owner of this project.", 403);
     }
     const newTask = await service.addTask(task);
 
@@ -28,7 +27,7 @@ export const addTask = async (req: Request<{},{},TaskDTO>, res: Response) =>{
 export const getTasks = async (req: Request,  res: Response) => {
     const owner_id = req.user!.id;
 
-    const tasks : TaskMODEL[] = await service.getTasks(owner_id);
+    const tasks : TaskModel[] = await service.getTasks(owner_id);
 
     res.status(200).json({
       message: "The tasks fetched successfully.",
@@ -40,18 +39,14 @@ export const getTasks = async (req: Request,  res: Response) => {
 export const getTaskAuthorized = async (req: Request<idParamsDTO>, res: Response) =>{
     const owner_id = req.user!.id;//user id
     const {id} = req.params; //task id
-    const task : TaskMODEL = await service.getTask(Number(id));
+    const task : TaskModel = await service.getTask(Number(id));
     if(!task){
-        const error = new Error("There is no task with this ID.");
-        (error as any).status = 404;
-        throw error;
+        throw new AppError("There is no task with this ID.", 404);        
     }
     //console.log(task.assigned_user_id)
     const project : ProjectModel = await projectService.getProject(task.project_id, owner_id);
     if((task.assigned_user_id !== owner_id && !project) && req.user!.role !== ROLE.ADMIN){
-        const error = new Error("Forbidedn you arent admin, the owner of this task or assained by this task.");
-        (error as any).status = 403;
-        throw error;
+        throw new AppError("Forbidedn you arent admin, the owner of this task or assained by this task.", 403);
     }
     res.status(200).json({
       message: "The task fetched successfully.",
@@ -64,18 +59,14 @@ export const getTaskAuthorized = async (req: Request<idParamsDTO>, res: Response
 export const editTask = async (req: Request<idParamsDTO,{},editTaskDTO>, res: Response) =>{
     const owner_id = req.user!.id;
     const {id} = req.params;
-    const oldTask : TaskMODEL = await service.getTask(Number(id));
+    const oldTask : TaskModel = await service.getTask(Number(id));
     if(!oldTask){
-        const error = new Error("There is no task with this ID.");
-        (error as any).status = 404;
-        throw error;
+        throw new AppError("There is no task with this ID.", 404);
     }
     const project : ProjectModel= await projectService.getProject(oldTask.project_id, owner_id);
    
     if(req.user!.role !== ROLE.ADMIN && oldTask.assigned_user_id !== owner_id && !project){
-        const error = new Error("Forbidedn you arent admin, the owner of this task or assained by this task.");
-        (error as any).status = 403;
-        throw error;
+        throw new AppError("Forbidedn you arent admin, the owner of this task or assained by this task.", 403);
     }
     //check if the editer is an admin or owner of the project  if not he will be assaigned user so only can edit status
     if( req.user!.role===ROLE.USER && project.owner_id!==owner_id ){
@@ -100,17 +91,13 @@ export const editTask = async (req: Request<idParamsDTO,{},editTaskDTO>, res: Re
 export const deleteTask = async (req: Request<idParamsDTO>, res: Response) =>{
     const owner_id : number= req.user!.id;
     const {id}  = req.params;
-    const task : TaskMODEL = await service.getTask(Number(id));
+    const task : TaskModel = await service.getTask(Number(id));
         if(!task){
-            const error = new Error("This task id gone.");
-            (error as any).status = 410;
-            throw error;
+            throw new AppError("This task id gone.", 410);
         }
     const ogProject : ProjectModel= await projectService.getProject(task.project_id, owner_id);
     if(req.user!.role === ROLE.USER && !ogProject){
-        const error = new Error("Forbidedn you arent admin, the owner of this task.");
-        (error as any).status = 403;
-        throw error;
+        throw new AppError("Forbidedn you arent admin or the owner of this task.", 403);
     }
     await service.deleteTask(Number(id));
     res.status(200).json({

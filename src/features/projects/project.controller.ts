@@ -4,6 +4,7 @@ import { ProjectModel } from "./project.type";
 import * as service from "./project.service"
 import *  as userService from "../auth/auth.service";
 import { ROLE, idParamsDTO } from "../../utils/constants";
+import { AppError } from "../../utils/ApiError";
 
 
 export const addProject = async (req: Request<{},{}, prjectDTO>, res: Response) => {
@@ -34,9 +35,7 @@ export const getProject = async (req: Request<idParamsDTO>, res: Response) => {
     const owner_id = req.user!.id;
     const project : ProjectModel = await service.getProject(Number(id), owner_id);
     if(!project && req.user!.role === ROLE.USER){
-        const error = new Error("Forbidedn you arent the owner of this project or admin.");
-        (error as any).status = 403;
-        throw error;
+        throw new AppError("Forbidedn you arent the owner of this project or admin.", 403);
     }
     res.status(200).json({
         message: "The project fetched successfully.",
@@ -50,9 +49,7 @@ export const editProject = async (req: Request<idParamsDTO,{}, editPrjectDTO>, r
     const userRole : string = (await userService.getUser(req.user!.email)).role;
     const safeCheckProject : ProjectModel = await service.getProject(Number(id), owner_id);
     if(!safeCheckProject && userRole === ROLE.USER){
-        const error = new Error("Forbidedn you arent admin nor the owner of this project.");
-        (error as any).status = 403;
-        throw error;
+        throw new AppError("Forbidedn you arent admin nor the owner of this project.", 403);
     }
     const project : ProjectModel = await service.editProject(Number(id), req.body);
     res.status(200).json({
@@ -67,9 +64,7 @@ export const deleteProject = async (req: Request<idParamsDTO>, res: Response) =>
     const userRole : string = (await userService.getUser(req.user!.email)).role;
     const safeCheckProject : ProjectModel = await service.getProject(Number(id), owner_id);
     if(!safeCheckProject && userRole === ROLE.USER){
-        const error = new Error("Forbidedn you arent admin nor the owner of this project.");
-        (error as any).status = 403;
-        throw error;
+        throw new AppError("Forbidedn you arent admin nor the owner of this project.", 403);
     }
 
     await service.deleteProject(Number(id));

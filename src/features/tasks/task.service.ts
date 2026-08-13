@@ -1,9 +1,9 @@
 import pool from "../../config/db";
 import { editTaskDTO, TaskDTO } from "./task.dto";
-import { TaskMODEL } from "./task.types";
+import { TaskModel } from "./task.types";
 
 
-export const addTask = async (task : TaskDTO) : Promise<TaskMODEL> =>{
+export const addTask = async (task : TaskDTO) : Promise<TaskModel> =>{
     const {
         title , 
         description, 
@@ -12,7 +12,7 @@ export const addTask = async (task : TaskDTO) : Promise<TaskMODEL> =>{
         assignedUserId, 
         projectId
     } = task
-    const result = await pool.query<TaskMODEL>(`
+    const result = await pool.query<TaskModel>(`
         INSERT INTO tasks (title, description, status, priority, assigned_user_id, project_id)
         VALUES ($1,$2,$3,$4,$5,$6)
         RETURNING *
@@ -23,8 +23,8 @@ export const addTask = async (task : TaskDTO) : Promise<TaskMODEL> =>{
     return result.rows[0]
 }
 
-export const getTasks = async (assignedId: number) : Promise<TaskMODEL[]> =>{
-    const result = await pool.query<TaskMODEL>(`
+export const getTasks = async (assignedId: number) : Promise<TaskModel[]> =>{
+    const result = await pool.query<TaskModel>(`
         SELECT * FROM tasks 
         WHERE assigned_user_id = $1
         ORDER BY id
@@ -35,8 +35,8 @@ export const getTasks = async (assignedId: number) : Promise<TaskMODEL[]> =>{
     return result.rows;
 }
 
-export const getTask = async (taskId: number) : Promise<TaskMODEL> =>{
-    const result = await pool.query<TaskMODEL>(`
+export const getTask = async (taskId: number) : Promise<TaskModel> =>{
+    const result = await pool.query<TaskModel>(`
         SELECT * FROM tasks 
         WHERE id = $1 
         `,
@@ -45,7 +45,7 @@ export const getTask = async (taskId: number) : Promise<TaskMODEL> =>{
     return result.rows[0];
 }
 
-export const editTask = async (taskId : number, task: editTaskDTO) : Promise<TaskMODEL>=>{
+export const editTask = async (taskId : number, task: editTaskDTO) : Promise<TaskModel>=>{
     const {
         title,
         description,
@@ -54,7 +54,7 @@ export const editTask = async (taskId : number, task: editTaskDTO) : Promise<Tas
         status,
         projectId
     } = task
-    const result = await pool.query<TaskMODEL>(`
+    const result = await pool.query<TaskModel>(`
         UPDATE tasks
         SET
             title = COALESCE($1, title),

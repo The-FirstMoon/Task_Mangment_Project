@@ -6,14 +6,14 @@ export async function createCommentsTable(){
             id SERIAL PRIMARY KEY,
             text  VARCHAR(250) NOT NULL,
             user_id INTEGER NOT NULL,
-            text_id INTEGER NOT NULL,
+            task_id INTEGER NOT NULL,
 
             create_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
             FOREIGN KEY (user_id)
                 REFERENCES users(id)
                 ON DELETE CASCADE,
-            FOREIGN KEY (text_id)
+            FOREIGN KEY (task_id)
                 REFERENCES users(id)
                 ON DELETE CASCADE
         )

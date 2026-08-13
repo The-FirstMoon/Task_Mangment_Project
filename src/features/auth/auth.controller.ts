@@ -5,6 +5,7 @@ import { hashingPassword } from "../../utils/password";
 import bcrypt from "bcrypt";
 import { genrate_jwt } from "../../utils/jwt";
 import { UserModel } from "../users/user.type";
+import { AppError } from "../../utils/ApiError";
 
 
 
@@ -23,9 +24,7 @@ export const login = async (req:Request<{},{},loginDTO>, res:Response)=>{
   const {password, email}= req.body
   const User : UserModel = await services.getUser(email)
   if (!User) {
-    const error = new Error("Invalid email or password");
-    (error as any).status = 401;
-    throw error;
+    throw new AppError("Invalid email or password", 401);
   }
   const ogPassword : string = User.password_hash;
   
@@ -33,9 +32,7 @@ export const login = async (req:Request<{},{},loginDTO>, res:Response)=>{
   //console.log(typeof ogPassword, ogPassword)
   const isVaildPassword : boolean = await bcrypt.compare(password,ogPassword);
   if(!isVaildPassword){
-      const error = new Error("Invalid email or password");
-      (error as any).status = 401;
-      throw error;
+    throw new AppError("Invalid email or password", 401);
   }
   const id : number= (await services.getUser(email)).id;
   type roleType = "USER" | "ADMIN"
