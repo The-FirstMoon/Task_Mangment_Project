@@ -1,4 +1,4 @@
-import e, { Request, Response } from "express";
+import { Request, Response } from "express";
 import { editTaskDTO, TaskDTO } from "./task.dto";
 import * as service from "./task.service";
 import * as projectService from "../projects/project.service";
@@ -85,5 +85,27 @@ export const editTask = async (req: Request<idParamsDTO,{},editTaskDTO>, res: Re
       message: "The task edited successfully as owner.",
       task: editedTask,  
     })
-
 }
+// the only one can delete a task is the owner of the og project 
+export const deleteTask = async (req: Request<idParamsDTO>, res: Response) =>{
+    const owner_id : number= req.user!.id;
+    const {id}  = req.params;
+    const task : TaskMODEL = await service.getTask(Number(id));
+    if(!task){
+        const error = new Error("This task id gone.");
+        (error as any).status = 410;
+        throw error;
+    }
+    const ogProject : ProjectModel= await projectService.getProject(task.project_id, owner_id);
+    if(req.user!.role === ROLE.USER && !ogProject){
+        const error = new Error("Forbidedn you arent admin, the owner of this task.");
+        (error as any).status = 403;
+        throw error;
+    }
+    await service.deleteTask(Number(id));
+    res.status(200).json({
+        message: "The task deleted successfully"
+    })
+}
+
+

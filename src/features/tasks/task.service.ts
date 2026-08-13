@@ -70,3 +70,12 @@ export const editTask = async (taskId : number, task: editTaskDTO) : Promise<Tas
     )
     return result.rows[0]
 }
+
+export const deleteTask = async (id: number) : Promise<void> =>{
+    await pool.query(`
+        DELETE FROM tasks
+        WHERE id= $1
+        `,
+        [id]
+    )
+}
