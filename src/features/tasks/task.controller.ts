@@ -66,8 +66,8 @@ export const editTask = async (req: Request<idParamsDTO,{},editTaskDTO>, res: Re
     const {id} = req.params;
     const oldTask : TaskMODEL = await service.getTask(Number(id));
     if(!oldTask){
-        const error = new Error("This task id gone.");
-        (error as any).status = 410;
+        const error = new Error("There is no task with this ID.");
+        (error as any).status = 404;
         throw error;
     }
     const project : ProjectModel= await projectService.getProject(oldTask.project_id, owner_id);
