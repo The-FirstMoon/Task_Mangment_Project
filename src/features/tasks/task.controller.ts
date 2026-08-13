@@ -32,15 +32,20 @@ export const getTasks = async (req: Request,  res: Response) => {
 
     res.status(200).json({
       message: "The tasks fetched successfully.",
-      task: tasks,
+      tasks: tasks,
     });
 }
 
 
-export const getTaskByAssaindUser = async (req: Request<idParamsDTO>, res: Response) =>{
-    const owner_id = req.user!.id;
-    const {id} = req.params;
+export const getTaskAuthorized = async (req: Request<idParamsDTO>, res: Response) =>{
+    const owner_id = req.user!.id;//user id
+    const {id} = req.params; //task id
     const task : TaskMODEL = await service.getTask(Number(id));
+    if(!task){
+        const error = new Error("There is no task with this ID.");
+        (error as any).status = 404;
+        throw error;
+    }
     //console.log(task.assigned_user_id)
     const project : ProjectModel = await projectService.getProject(task.project_id, owner_id);
     if((task.assigned_user_id !== owner_id && !project) && req.user!.role !== ROLE.ADMIN){
@@ -59,8 +64,12 @@ export const getTaskByAssaindUser = async (req: Request<idParamsDTO>, res: Respo
 export const editTask = async (req: Request<idParamsDTO,{},editTaskDTO>, res: Response) =>{
     const owner_id = req.user!.id;
     const {id} = req.params;
-     console.log( typeof req.user!.id)
     const oldTask : TaskMODEL = await service.getTask(Number(id));
+    if(!oldTask){
+        const error = new Error("This task id gone.");
+        (error as any).status = 410;
+        throw error;
+    }
     const project : ProjectModel= await projectService.getProject(oldTask.project_id, owner_id);
    
     if(req.user!.role !== ROLE.ADMIN && oldTask.assigned_user_id !== owner_id && !project){
@@ -68,10 +77,11 @@ export const editTask = async (req: Request<idParamsDTO,{},editTaskDTO>, res: Re
         (error as any).status = 403;
         throw error;
     }
-    if(oldTask.assigned_user_id === owner_id){
+    //check if the editer is an admin or owner of the project  if not he will be assaigned user so only can edit status
+    if( req.user!.role===ROLE.USER && project.owner_id!==owner_id ){
         //the assagin user only can change the status only
         const newTask : editTaskDTO = {
-            status: req.body.status,
+            status: req.body.status
         }
         const editedTask = await service.editTask(Number(id), newTask);
         return res.status(200).json({
@@ -91,11 +101,11 @@ export const deleteTask = async (req: Request<idParamsDTO>, res: Response) =>{
     const owner_id : number= req.user!.id;
     const {id}  = req.params;
     const task : TaskMODEL = await service.getTask(Number(id));
-    if(!task){
-        const error = new Error("This task id gone.");
-        (error as any).status = 410;
-        throw error;
-    }
+        if(!task){
+            const error = new Error("This task id gone.");
+            (error as any).status = 410;
+            throw error;
+        }
     const ogProject : ProjectModel= await projectService.getProject(task.project_id, owner_id);
     if(req.user!.role === ROLE.USER && !ogProject){
         const error = new Error("Forbidedn you arent admin, the owner of this task.");
