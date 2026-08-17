@@ -1,10 +1,11 @@
 import { errorHandler } from "./middleware/errorHandler";
-import express from 'express';
+import express, { Request, Response } from 'express';
 import authRouter from './features/auth/auth.router';
 import user from "./features/users/user.router"
 import project from "./features/projects/project.router"
 import task from "./features/tasks/task.router";
 import comment from "./features/comments/comment.router";
+import { swaggerSpec, swaggerUiServe, swaggerUiSetup } from "./config/swager";
 
 const app = express()
 app.use(express.json())
@@ -14,6 +15,13 @@ app.use("/user", user);
 app.use("/project", project);
 app.use("/task", task);
 app.use("/comment", comment);
+
+// Swagger router 
+const swaggerAPI = (req : Request, res : Response) =>{
+    res.json(swaggerSpec)
+}
+app.use("/api", swaggerAPI);
+app.use('/api-docs', swaggerUiServe, swaggerUiSetup);
 
 // Default route
 app.get("/", (req, res) => {
