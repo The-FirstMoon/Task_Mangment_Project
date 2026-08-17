@@ -5,5 +5,5 @@ export interface addCommentDTO{
 }
 
 export interface editCommentDTO{
-
+    text?: string
 }

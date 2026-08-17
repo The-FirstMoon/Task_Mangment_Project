@@ -14,7 +14,7 @@ export async function createCommentsTable(){
                 REFERENCES users(id)
                 ON DELETE CASCADE,
             FOREIGN KEY (task_id)
-                REFERENCES users(id)
+                REFERENCES tasks(id)
                 ON DELETE CASCADE
         )
     `);

@@ -2,7 +2,7 @@ import {Router} from "express";
 import { verfiyToken } from "../../middleware/authenticationJWT";
 import { validate } from "../../middleware/validate";
 import { addCommentSchema, editCommentSchema } from "./comment.validator";
-import { addComment, getComment, getComments } from "./comment.controller";
+import { addComment, deleteComment, editComment, getComment, getComments } from "./comment.controller";
 
 const router = Router();
 

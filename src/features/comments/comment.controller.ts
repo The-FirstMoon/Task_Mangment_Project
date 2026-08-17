@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import { addCommentDTO } from "./comment.dto";
+import { addCommentDTO, editCommentDTO } from "./comment.dto";
 import { TaskModel } from "../tasks/task.types";
 import * as servieTask from "../tasks/task.service"
 import { ProjectModel } from "../projects/project.type";
 import * as servieProject from "../projects/project.service";
-import { ROLE } from "../../utils/constants";
+import { idParamsDTO, ROLE } from "../../utils/constants";
 import { CommentModel } from "./comment.types";
 import * as service from "../comments/comment.service"
 import { AppError } from "../../utils/ApiError";
@@ -47,7 +47,7 @@ export const getComments = async (req: Request, res: Response)=>{
     if((task.assigned_user_id !== owner_id && !project) && req.user!.role !== ROLE.ADMIN){
         throw new AppError("Forbidedn you arent admin, the owner of this task or assained by this task.", 403);
     }
-    const comments : CommentModel = await service.getComments(Number(id));
+    const comments : CommentModel[] = await service.getComments(Number(id));
     res.status(200).json({
         message: "The comments fetched successfully.",
         comments: comments
@@ -75,3 +75,35 @@ export const getComment =  async(req: Request, res: Response) =>{
     })
 }
 
+export const editComment = async(req: Request<idParamsDTO,{},editCommentDTO>, res: Response)=>{
+    const owner_id = req.user!.id;
+    const {id} = req.params;
+    const ogComment : CommentModel = await service.getComment(Number(id));
+    if(!ogComment){
+        throw new AppError("There is no comment with this id.", 404);
+    }
+    if(ogComment.user_id !== owner_id && req.user!.role === ROLE.USER){
+        throw new AppError("Forbidedn you arent admin or the owner of this comment.", 403);
+    }
+    const newComment : CommentModel= await service.editComment(Number(id), req.body);
+    res.status(200).json({
+        message: "The comment edited successfully.",
+        comment: newComment
+    })
+}
+
+export const deleteComment = async(req: Request<idParamsDTO>, res: Response) => {
+    const owner_id= req.user!.id;
+    const {id} = req.params;
+    const ogComment : CommentModel = await service.getComment(Number(id));
+    if(!ogComment){
+        throw new AppError("This comment id gone.", 410);
+    }
+    if(ogComment.user_id !== owner_id && req.user!.role === ROLE.USER){
+        throw new AppError("Forbidedn you arent admin or the owner of this comment.", 403);
+    }
+    await service.deleteComment(Number(id));
+    res.status(200).json({
+        message: "The comment deleted successfully."
+    })
+}
