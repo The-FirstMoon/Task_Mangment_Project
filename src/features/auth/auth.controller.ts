@@ -3,9 +3,10 @@ import { loginDTO, registerDTO } from "./auth.dto";
 import * as services from "./auth.service";
 import { hashingPassword } from "../../utils/password";
 import bcrypt from "bcrypt";
-import { genrate_jwt } from "../../utils/jwt";
+import { generateJWT } from "../../utils/jwt";
 import { UserModel } from "../users/user.type";
-import { AppError } from "../../utils/ApiError";
+import { AppError } from "../../utils/AppError";
+import { ROLE } from "../../utils/constants";
 
 
 
@@ -35,10 +36,9 @@ export const login = async (req:Request<{},{},loginDTO>, res:Response)=>{
     throw new AppError("Invalid email or password", 401);
   }
   const id : number= (await services.getUser(email)).id;
-  type roleType = "USER" | "ADMIN"
-  const role : roleType = (await services.getUser(email)).role;
+  const role : ROLE = (await services.getUser(email)).role;
   //console.log(typeof id, id )
-  const token = genrate_jwt(id, email, role)
+  const token = generateJWT(id, email, role)
 
   res.status(200).json({
     message: "LogIn successfully.",

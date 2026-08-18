@@ -1,5 +1,5 @@
 import {Router} from "express";
-import { verfiyToken } from "../../middleware/authenticationJWT";
+import { verifyToken } from "../../middleware/authenticationJWT";
 import { validate } from "../../middleware/validate";
 import { addCommentSchema, editCommentSchema } from "./comment.validator";
 import { addComment, deleteComment, editComment, getComment, getComments } from "./comment.controller";
@@ -32,7 +32,7 @@ const router = Router();
  *       404:
  *         description: Task not found.
  */
-router.post("/", verfiyToken, validate(addCommentSchema), addComment);
+router.post("/", verifyToken, validate(addCommentSchema), addComment);
 /**
  * @swagger
  * /comment/task/{id}:
@@ -53,7 +53,7 @@ router.post("/", verfiyToken, validate(addCommentSchema), addComment);
  *       404:
  *         description: Task not found.
  */
-router.get("/task/:id", verfiyToken, getComments);
+router.get("/task/:id", verifyToken, getComments);
 /**
  * @swagger
  * /comment/{id}:
@@ -74,7 +74,7 @@ router.get("/task/:id", verfiyToken, getComments);
  *       404:
  *         description: Comment not found.
  */
-router.get("/:id", verfiyToken, getComment);
+router.get("/:id", verifyToken, getComment);
 /**
  * @swagger
  * /comment/{id}:
@@ -104,7 +104,7 @@ router.get("/:id", verfiyToken, getComment);
  *       404:
  *         description: Comment not found.
  */
-router.patch("/:id", verfiyToken, validate(editCommentSchema), editComment);
+router.patch("/:id", verifyToken, validate(editCommentSchema), editComment);
 /**
  * @swagger
  * /comment/{id}:
@@ -121,6 +121,6 @@ router.patch("/:id", verfiyToken, validate(editCommentSchema), editComment);
  *       200:
  *         description: The comment deleted successfully.
  */
-router.delete("/:id", verfiyToken, deleteComment);
+router.delete("/:id", verifyToken, deleteComment);
 
 export default  router;

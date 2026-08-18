@@ -1,7 +1,7 @@
 import { Request, RequestParamHandler, Response } from "express";
 import * as services from "./user.service";
 import { deleteParamsDTO } from "./user.dto";
-import { AppError } from "../../utils/ApiError";
+import { AppError } from "../../utils/AppError";
 import { UserModel } from "./user.type";
 
 export const getMe = async (req:Request,res:Response)=>{

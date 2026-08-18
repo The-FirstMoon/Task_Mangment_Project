@@ -7,7 +7,7 @@ import * as servieProject from "../projects/project.service";
 import { idParamsDTO, ROLE } from "../../utils/constants";
 import { CommentModel } from "./comment.types";
 import * as service from "../comments/comment.service"
-import { AppError } from "../../utils/ApiError";
+import { AppError } from "../../utils/AppError";
 
 export const addComment =  async (req: Request<{}, {}, addCommentDTO>, res: Response) =>{
     const owner_id =  req.user!.id;

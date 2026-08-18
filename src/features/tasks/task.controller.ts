@@ -5,7 +5,7 @@ import * as projectService from "../projects/project.service";
 import { ProjectModel } from "../projects/project.type";
 import { TaskModel } from "./task.types";
 import { idParamsDTO, ROLE } from "../../utils/constants";
-import { AppError } from "../../utils/ApiError";
+import { AppError } from "../../utils/AppError";
 
 // when add a task u will be the owner of the project of this task, so u r nt the one who is gonna be doing the task
 export const addTask = async (req: Request<{},{},TaskDTO>, res: Response) =>{

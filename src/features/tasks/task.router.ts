@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { verfiyToken } from "../../middleware/authenticationJWT";
+import { verifyToken } from "../../middleware/authenticationJWT";
 import { validate } from "../../middleware/validate";
 import { taskAddTaskSchema, taskEditTaskSchema } from "./task.validator";
 import { addTask, deleteTask, editTask, getTaskAuthorized, getTasks } from "./task.controller";
@@ -33,7 +33,7 @@ const router= Router()
  *       201:
  *         description: The task added successfully.
  */
-router.post("/", verfiyToken, validate(taskAddTaskSchema), addTask);
+router.post("/", verifyToken, validate(taskAddTaskSchema), addTask);
 /**
  * @swagger
  * /task/:
@@ -43,7 +43,7 @@ router.post("/", verfiyToken, validate(taskAddTaskSchema), addTask);
  *       200:
  *         description: The tasks fetched successfully.
  */
-router.get("/", verfiyToken, getTasks);
+router.get("/", verifyToken, getTasks);
 /**
  * @swagger
  * /task/{id}:
@@ -60,7 +60,7 @@ router.get("/", verfiyToken, getTasks);
  *       200:
  *         description: The task fetched successfully.
  */
-router.get("/:id", verfiyToken, getTaskAuthorized);
+router.get("/:id", verifyToken, getTaskAuthorized);
 //router.get("/:id", verfiyToken, getTasksByProjectId)
 
 /**
@@ -98,7 +98,7 @@ router.get("/:id", verfiyToken, getTaskAuthorized);
  *       200:
  *         description: The task edited successfully.
  */
-router.patch("/:id", verfiyToken, validate(taskEditTaskSchema), editTask);
+router.patch("/:id", verifyToken, validate(taskEditTaskSchema), editTask);
 /**
  * @swagger
  * /task/{id}:
@@ -115,6 +115,6 @@ router.patch("/:id", verfiyToken, validate(taskEditTaskSchema), editTask);
  *       200:
  *         description: The task deleted successfully.
  */
-router.delete("/:id", verfiyToken, deleteTask);
+router.delete("/:id", verifyToken, deleteTask);
 
 export default router;

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { validate } from "../../middleware/validate";
-import { verfiyToken } from "../../middleware/authenticationJWT";
+import { verifyToken } from "../../middleware/authenticationJWT";
 import { projectAddProjectSchema, projectEditProjecttSchema } from "./project.validator";
 import { addProject, deleteProject, editProject, getProject, getProjects } from "./project.controller";
 
@@ -26,7 +26,7 @@ const router = Router();
  *       201:
  *         description: The project added successfully.
  */
-router.post("/", validate(projectAddProjectSchema), verfiyToken, addProject);
+router.post("/", verifyToken, validate(projectAddProjectSchema), addProject);
 /**
  * @swagger
  * /project/:
@@ -36,7 +36,7 @@ router.post("/", validate(projectAddProjectSchema), verfiyToken, addProject);
  *       200:
  *         description: The projects fetched successfully.
  */
-router.get("/", verfiyToken, getProjects);
+router.get("/", verifyToken, getProjects);
 /**
  * @swagger
  * /project/{id}:
@@ -53,7 +53,7 @@ router.get("/", verfiyToken, getProjects);
  *       200:
  *         description: The project fetched successfully.
  */
-router.get("/:id", verfiyToken, getProject);
+router.get("/:id", verifyToken, getProject);
 /**
  * @swagger
  * /project/{id}:
@@ -81,7 +81,7 @@ router.get("/:id", verfiyToken, getProject);
  *       200:
  *         description: The project edited successfully.
  */
-router.patch("/:id", validate(projectEditProjecttSchema), verfiyToken, editProject);
+router.patch("/:id", verifyToken, validate(projectEditProjecttSchema), editProject);
 /**
  * @swagger
  * /project/{id}:
@@ -98,5 +98,5 @@ router.patch("/:id", validate(projectEditProjecttSchema), verfiyToken, editProje
  *       200:
  *         description: The project deleted successfully.
  */
-router.delete("/:id", verfiyToken,deleteProject)
+router.delete("/:id", verifyToken, deleteProject)
 export default router;

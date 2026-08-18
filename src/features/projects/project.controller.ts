@@ -4,7 +4,7 @@ import { ProjectModel } from "./project.type";
 import * as service from "./project.service"
 import *  as userService from "../auth/auth.service";
 import { ROLE, idParamsDTO } from "../../utils/constants";
-import { AppError } from "../../utils/ApiError";
+import { AppError } from "../../utils/AppError";
 
 
 export const addProject = async (req: Request<{},{}, prjectDTO>, res: Response) => {

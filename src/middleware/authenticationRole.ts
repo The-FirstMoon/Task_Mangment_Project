@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { AppError } from "../utils/ApiError";
+import { AppError } from "../utils/AppError";
 
 export const requireRole = (role : string) => {
  return (req: Request, res: Response, next: NextFunction)=>{

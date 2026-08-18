@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import {  verfiyToken } from '../../middleware/authenticationJWT';
+import {  verifyToken } from '../../middleware/authenticationJWT';
 import { deleteUser, getMe } from './user.controller';
 import { requireRole } from '../../middleware/authenticationRole';
 import { ROLE } from '../../utils/constants';
@@ -14,7 +14,7 @@ const router = Router();
  *       200:
  *         description: The user fetched successfully.
  */
-router.get("/me" , verfiyToken, getMe);
+router.get("/me" , verifyToken, getMe);
 /**
  * @swagger
  * /user/{id}:
@@ -31,6 +31,6 @@ router.get("/me" , verfiyToken, getMe);
  *       200:
  *         description: The user deleted successfully.
  */
-router.delete("/:id", verfiyToken, requireRole(ROLE.ADMIN), deleteUser);
+router.delete("/:id", verifyToken, requireRole(ROLE.ADMIN), deleteUser);
 
 export default router;

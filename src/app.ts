@@ -6,6 +6,7 @@ import project from "./features/projects/project.router"
 import task from "./features/tasks/task.router";
 import comment from "./features/comments/comment.router";
 import { swaggerSpec, swaggerUiServe, swaggerUiSetup } from "./config/swager";
+import { notFound } from "./middleware/notFound";
 
 const app = express()
 app.use(express.json())
@@ -29,5 +30,6 @@ app.get("/", (req, res) => {
     message: "Task Mangment API is running",
   });
 });
+app.use(notFound);
 app.use(errorHandler);
 export default app;
